@@ -41,7 +41,7 @@ class DataFlattener:
 
     def flatten_array_item(
         self, item: Any, prefix: str = "", row_index: int = 0, max_depth: int = 10
-    ) -> dict | None:
+    ) -> dict | list | None:
         """Flatten a single item from an array.
 
         Args:
@@ -56,8 +56,6 @@ class DataFlattener:
         flat = self.flatten(item, prefix, max_depth)
         if flat is None:
             return None
-
-        flat["_row_index"] = row_index
 
         exploded_items = []
         flat, arrays = self._extract_arrays(flat, prefix)
@@ -114,7 +112,7 @@ class DataFlattener:
             for key, value in data.items():
                 if isinstance(value, list):
                     for idx, item in enumerate(value[:sample_size]):
-                        flat = self.flatten_array_item(item, key, idx)
+                        flat = self.flatten_array_item(item, "", idx)
                         if flat:
                             records.append(flat)
                 else:

@@ -133,6 +133,14 @@ class DataNormalizer:
         
         return 'string'
 
+    def detect_currency(self, values: list[Any]) -> str | None:
+        """Detect if a field has currency/numeric string patterns.
+        
+        Returns a generic "currency" marker - frontend can format based on locale.
+        Only detects if there's an explicit currency symbol or code.
+        """
+        return self.detect_currency_field(values)
+
     def detect_currency_field(self, values: list[Any]) -> str | None:
         """Detect if a field has currency/numeric string patterns.
         

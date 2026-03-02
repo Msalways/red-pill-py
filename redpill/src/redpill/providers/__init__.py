@@ -2,9 +2,17 @@
 
 from typing import Any, Type
 
-from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_core.runnables import RunnableConfig
+try:
+    from langchain_core.language_models import BaseChatModel
+    from langchain_core.messages import HumanMessage, SystemMessage
+    from langchain_core.runnables import RunnableConfig
+    LANGCHAIN_AVAILABLE = True
+except ImportError:
+    BaseChatModel = None  # type: ignore
+    HumanMessage = None  # type: ignore
+    SystemMessage = None  # type: ignore
+    RunnableConfig = None  # type: ignore
+    LANGCHAIN_AVAILABLE = False
 
 
 class LLMProvider:
@@ -64,7 +72,7 @@ class LLMProvider:
         max_tokens: int = 4000,
     ) -> Any:
         """Generate a JSON response with schema validation."""
-        from langchain_core.output_parsers import JsonOutputParser
+        from langchain_core.output_parsers import JsonOutputParser  # type: ignore[attr-defined]
 
         messages = []
         if system_prompt:

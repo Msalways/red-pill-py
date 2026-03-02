@@ -70,7 +70,7 @@ class PolarsExecutor:
         df = self._apply_grouping(df, spec)
 
         if spec.params.sort:
-            df = self._apply_sort(df, spec.params.sort)
+            df = self._apply_sort(df, spec.params.sort, spec)
 
         if spec.params.limit:
             df = df.head(spec.params.limit)
@@ -336,12 +336,14 @@ class PolarsExecutor:
 
         df = df.group_by(available_cols).agg(agg_expr)
 
-        new_columns = available_cols.copy()
+        new_columns = list(available_cols)
         resolved_y = self._resolve_field(df, resolved_y_field) if resolved_y_field else None
-        if resolved_y and resolved_y != "count":
+        
+        if y_agg == AggregationType.COUNT:
+            if "count" not in new_columns:
+                new_columns.append("count")
+        elif resolved_y and resolved_y != "count" and resolved_y not in new_columns:
             new_columns.append(resolved_y)
-        else:
-            new_columns.append("count")
 
         if series_field and series_field not in new_columns:
             new_columns.append(series_field)
@@ -365,10 +367,15 @@ class PolarsExecutor:
         else:
             return pl.len().alias("count")
 
-    def _apply_sort(self, df: pl.DataFrame, sort_config: Any) -> pl.DataFrame:
+    def _apply_sort(self, df: pl.DataFrame, sort_config: Any, spec: ChartSpec) -> pl.DataFrame:
         """Apply sorting."""
         field = sort_config.field
         direction = sort_config.direction
+
+        if field == "y" and spec.y_axis.aggregation == AggregationType.COUNT:
+            field = "count"
+        elif field == "x":
+            field = spec.x_axis.field
 
         if field not in df.columns:
             return df
@@ -440,7 +447,7 @@ class AsyncPolarsExecutor(PolarsExecutor):
         df = self._apply_grouping(df, spec)
 
         if spec.params.sort:
-            df = self._apply_sort(df, spec.params.sort)
+            df = self._apply_sort(df, spec.params.sort, spec)
 
         result_data = self._to_chart_format(df, spec)
 
