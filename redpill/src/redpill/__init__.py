@@ -1,6 +1,6 @@
 """Redpill - AI-powered generic SDK for dynamic chart generation."""
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 from redpill.client import Redpill
 
