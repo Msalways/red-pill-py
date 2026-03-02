@@ -12,15 +12,6 @@ license = {text = "MIT"}
 authors = [
     {name = "Shanthosh", email = "shanthubolt@gmail.com"}
 ]
-keywords = ["charts", "visualization", "ai", "llm", "polars", "data"]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-]
 
 dependencies = [
     "polars>=0.20.0",
@@ -38,6 +29,7 @@ langgraph = [
     "langchain-ollama>=0.1.0",
     "langgraph>=0.2.0",
 ]
+
 all = [
     "langchain-core>=0.3.0",
     "langchain-openai>=0.2.0",
@@ -48,60 +40,7 @@ all = [
     "google-generativeai>=0.8.0",
     "cohere>=5.0.0",
 ]
-dev = [
-    "pytest>=8.0.0",
-    "pytest-asyncio>=0.23.0",
-    "ruff>=0.4.0",
-    "mypy>=1.8.0",
-    "build>=1.0.0",
-    "twine>=5.0.0",
-    "wheel>=0.42.0",
-]
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.pytest.ini_options]
-license = {text = "MIT"}
-authors = [
-    {name = "Redpill Team", email = "team@redpill.io"}
-]
-keywords = ["charts", "visualization", "ai", "llm", "polars", "data"]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-]
-
-dependencies = [
-    "polars>=0.20.0",
-    "pydantic>=2.0.0",
-    "httpx>=0.27.0",
-    "python-dotenv>=1.0.0",
-]
-
-[project.optional-dependencies]
-langgraph = [
-    "langchain-core>=0.3.0",
-    "langchain-openai>=0.2.0",
-    "langchain-anthropic>=0.2.0",
-    "langchain-aws>=0.1.0",
-    "langchain-ollama>=0.1.0",
-    "langgraph>=0.2.0",
-]
-all = [
-    "langchain-core>=0.3.0",
-    "langchain-openai>=0.2.0",
-    "langchain-anthropic>=0.2.0",
-    "langchain-aws>=0.1.0",
-    "langchain-ollama>=0.1.0",
-    "langgraph>=0.2.0",
-    "google-generativeai>=0.8.0",
-    "cohere>=5.0.0",
-]
 dev = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
@@ -118,9 +57,6 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = "-v --tb=short"
 
 [tool.ruff]
 line-length = 100
