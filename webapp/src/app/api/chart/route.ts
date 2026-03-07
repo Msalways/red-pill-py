@@ -34,26 +34,28 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 import sys
 import json
 import os
-from redpill import Redpill
-from openai import OpenAI
-
-client = OpenAI(
-    api_key="${apiKey}",
-    base_url="https://openrouter.ai/api/v1"
-)
-
-def llm(messages, options=None):
-    response = client.chat.completions.create(
-        model="upstage/solar-pro-3:free",
-        messages=messages,
-        temperature=options.get("temperature", 0.7) if options else 0.7,
-        max_tokens=options.get("max_tokens", 4000) if options else 4000,
-    )
-    return {"content": response.choices[0].message.content}
-
-rp = Redpill().llm(llm).build()
+import traceback
 
 try:
+    from redpillx import Redpill
+    from openai import OpenAI
+
+    client = OpenAI(
+        api_key="${apiKey}",
+        base_url="https://openrouter.ai/api/v1"
+    )
+
+    def llm(messages, options=None):
+        response = client.chat.completions.create(
+            model="z-ai/glm-4.5-air:free",
+            messages=messages,
+            temperature=options.get("temperature", 0.7) if options else 0.7,
+            max_tokens=options.get("max_tokens", 4000) if options else 4000,
+        )
+        return {"content": response.choices[0].message.content}
+
+    rp = Redpill().llm(llm).build()
+
     data_json = json.loads('''${JSON.stringify(data).replace(/'/g, "\\'")}''')
     
     result = rp.generate_spec(data=data_json, prompt="${prompt.replace(/"/g, '\\"')}")
@@ -69,22 +71,28 @@ try:
     print(json.dumps(response))
     
 except Exception as e:
-    print(json.dumps({"error": str(e)}))
+    print(json.dumps({"error": str(e), "traceback": traceback.format_exc()}))
     sys.exit(1)
 `;
 
     fs.writeFileSync(scriptPath, pythonScript);
 
     const rootDir = process.env.REDPILL_ROOT || 'C:\\Users\\shant\\Videos\\redpill';
-    const redpillSrcPath = path.join(rootDir, 'packages/python/redpill/src');
-    const venvPython = path.join(rootDir, 'packages/python/venv/Scripts/python.exe');
+    const redpillSrcPath = path.join(rootDir, 'packages/python/redpillx/src');
+    const venvPython = path.join(rootDir, 'packages/python/redpillx/venv/Scripts/python.exe');
+    let pythonPath = venvPython;
 
     if (!fs.existsSync(venvPython)) {
-      return NextResponse.json({ error: 'Python executable not found' }, { status: 500 });
+      const pyPython = 'py';
+      if (fs.existsSync(path.join(rootDir, 'packages/python/redpillx'))) {
+        pythonPath = pyPython;
+      } else {
+        pythonPath = pyPython;
+      }
     }
 
     return new Promise((resolve) => {
-      const python = spawn(venvPython, [scriptPath], {
+      const python = spawn(pythonPath, ['-3.12', scriptPath], {
         env: {
           ...process.env,
           OPENAI_API_KEY: apiKey,
@@ -113,7 +121,7 @@ except Exception as e:
 
         if (code !== 0) {
           resolve(NextResponse.json(
-            { error: error || 'Python script failed', stderr: error },
+            { error: error || 'Python script failed', stderr: error, output: output },
             { status: 500 }
           ));
         } else {
@@ -121,7 +129,7 @@ except Exception as e:
             const result = JSON.parse(output);
             if (result.error) {
               resolve(NextResponse.json(
-                { error: result.error },
+                { error: result.error, traceback: result.traceback },
                 { status: 500 }
               ));
             } else {

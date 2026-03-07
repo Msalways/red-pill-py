@@ -55,11 +55,11 @@ export default function ExecutorPage() {
   const [error, setError] = useState('');
   const [selectedLibrary, setSelectedLibrary] = useState('recharts');
   const [savedSpecs, setSavedSpecs] = useState<SavedSpec[]>([]);
-  const [localStorageKey, setLocalStorageKey] = useState('redpill-specs');
+  const [localStorageKey, setLocalStorageKey] = useState('redpillx-specs');
   const [selectedSdk, setSelectedSdk] = useState<'python' | 'js'>('python');
 
   const SDK_OPTIONS = [
-    { id: 'python', name: 'Python SDK', description: 'Python Redpill SDK' },
+    { id: 'python', name: 'Python SDK', description: 'Python RedpillX SDK' },
   ];
 
   useEffect(() => {

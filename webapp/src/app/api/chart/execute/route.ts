@@ -25,8 +25,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 import sys
 import json
 import os
-from redpill.spec.schema import ChartSpec
-from redpill.executor.polars_executor import PolarsExecutor
+from redpillx.spec.schema import ChartSpec
+from redpillx.executor.polars_executor import PolarsExecutor
 
 executor = PolarsExecutor()
 
@@ -52,11 +52,16 @@ except Exception as e:
     fs.writeFileSync(scriptPath, pythonScript);
 
     const rootDir = process.env.REDPILL_ROOT || 'C:\\Users\\shant\\Videos\\redpill';
-    const redpillSrcPath = path.join(rootDir, 'packages/python/redpill/src');
-    const venvPython = path.join(rootDir, 'packages/python/redpill/venv/Scripts/python.exe');
+    const redpillSrcPath = path.join(rootDir, 'packages/python/redpillx/src');
+    const venvPython = path.join(rootDir, 'packages/python/redpillx/venv/Scripts/python.exe');
+    let pythonPath = venvPython;
+
+    if (!fs.existsSync(venvPython)) {
+      pythonPath = 'py';
+    }
 
     return new Promise((resolve) => {
-      const python = spawn(venvPython, [scriptPath], {
+      const python = spawn(pythonPath, ['-3.12', scriptPath], {
         env: {
           ...process.env,
           PYTHONPATH: redpillSrcPath
